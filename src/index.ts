@@ -7,19 +7,21 @@ import koaStatic from 'koa-static'
 import config from './config'
 import router from './router/index'
 import initRoutes from './common/decorator'
-// import { initDB } from './db'
+import { initDB } from './db'
 // 中间件
 import AccessLogMiddleware from './middleware/AccessLogMiddleware' // 登录日志
+import LoginInterceptMiddleware from './middleware/LoginInterceptMiddleware'
 
 // 创建
 const app = new Koa()
-// initDB() // 初始化数据库
+initDB() // 初始化数据库
 
 // 中间件注册
 app
 	.use(koaStatic(path.join(__dirname, 'public')))
+	.use(koaBody(config.app.koaBody))
 	.use(AccessLogMiddleware)
-	.use(koaBody())
+	.use(LoginInterceptMiddleware)
 // 路由注册
 initRoutes(app, router)
 // 开始监听

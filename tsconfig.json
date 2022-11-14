@@ -2,12 +2,11 @@
     "ts-node": {
         "files": true,
         "compilerOptions": {
-            "paths": {
-            }
+            "paths": {}
         }
     },
     "compilerOptions": {
-        "target": "es2016",
+        "target": "es2017",
         "module": "commonjs",
         "allowJs": true,
         "checkJs": true,
@@ -22,8 +21,7 @@
         "rootDir": "./",
         "baseUrl": "src",
         "experimentalDecorators": true,
-        "paths": {
-        },
+        "paths": {},
         "types": []
     },
     "include": [

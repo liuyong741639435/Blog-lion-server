@@ -5,6 +5,7 @@ import sqlInit from './sql/sql'
 const pool = mysql.createPool({
 	host: config.DB.db_host,
 	port: config.DB.db_port,
+	database: config.DB.db_dataBaseName,
 	user: config.DB.db_user,
 	password: config.DB.db_password,
 	waitForConnections: true,

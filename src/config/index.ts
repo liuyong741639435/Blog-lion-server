@@ -7,13 +7,16 @@ const config = {
 	// 服务器相关
 	app: {
 		port: process.env.APP_PORT,
-		app_prefix: process.env.APP_PREFIX
+		prefix: process.env.APP_PREFIX,
+		koaBody: {
+			multipart: true // 支持文件上传
+		}
 	},
 	// 数据库相关
 	DB: {
 		db_host: process.env.DB_HOST,
 		db_port: Number(process.env.DB_PORT),
-		db_name: process.env.DB_NAME,
+		db_dataBaseName: process.env.DB_BASEDATANAME,
 		db_user: process.env.DB_USER,
 		db_password: process.env.DB_PASSWORD
 	},

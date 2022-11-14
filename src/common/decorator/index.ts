@@ -11,6 +11,5 @@ export default function (app: Koa, router: Router) {
 			item.middleware ? router[item.method](url, ...item.middleware, item.handler) : router[item.method](url, item.handler)
 		}
 	})
-
 	app.use(router.routes()).use(router.allowedMethods())
 }

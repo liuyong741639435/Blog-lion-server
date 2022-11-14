@@ -1,12 +1,12 @@
-import { Controller, RequestMapping } from '../common/decorator/decorator'
-import userTips from '../errorTips/userTips'
 import { Context } from 'koa'
-import userService from '../service/userService'
+import { Controller, RequestMapping } from '../common/decorator/decorator'
 import { REQUEST_METHOD } from '../types/enum'
 import { sign } from '../utils/auth'
 import collectErrorLogs from '../utils/collectErrorLogs'
 import response from '../utils/response'
 import { getFormData } from '../utils/tools'
+import userTips from '../errorTips/userTips'
+import userService from '../service/userService'
 
 @Controller('/user')
 export default class UserController {
@@ -14,7 +14,6 @@ export default class UserController {
 	@RequestMapping({ url: '/queryUserName', method: REQUEST_METHOD.GET })
 	async querUserName(ctx: Context) {
 		const { userName } = getFormData(ctx)
-		console.log('userName', userName)
 		// 数据校验
 		if (!userTips.userName.regular?.test(userName)) {
 			response.error(ctx, userTips.userName.msg)
