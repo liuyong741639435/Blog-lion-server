@@ -1,6 +1,6 @@
 import { createHash } from 'crypto'
 import { poolPromise } from '../db'
-import { setValues } from './utils'
+import { setValues } from './tool'
 
 interface createdUserParams {
 	userId: string
