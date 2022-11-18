@@ -3,6 +3,7 @@ node_modules
 /dist
 /bin
 .vs
+/src/public/upload/*
 
 # local env files
 .env
