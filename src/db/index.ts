@@ -2,6 +2,17 @@ import config from '../config'
 import mysql from 'mysql2'
 import sqlInit from './sql/sql'
 
+console.table({
+	host: config.DB.db_host,
+	port: config.DB.db_port,
+	database: config.DB.db_dataBaseName,
+	user: config.DB.db_user,
+	password: config.DB.db_password,
+	waitForConnections: true,
+	connectionLimit: 10,
+	queueLimit: 0
+})
+
 const pool = mysql.createPool({
 	host: config.DB.db_host,
 	port: config.DB.db_port,
