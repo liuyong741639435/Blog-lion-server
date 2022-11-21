@@ -1,4 +1,7 @@
 import dotEnv from 'dotenv'
+import { File } from 'formidable'
+import path from 'path'
+import { checkDirExist, getUploadDirName, getUploadFileExt, getUploadFileName } from '../utils/tools'
 // 不同的环境，把对应的.env.development .env.prod .env.uat  改为.env 即可
 dotEnv.config()
 // end
@@ -9,7 +12,21 @@ const config = {
 		port: process.env.APP_PORT,
 		prefix: process.env.APP_PREFIX,
 		koaBody: {
-			multipart: true // 支持文件上传
+			multipart: true, // 支持文件上传
+			formidable: {
+				keepExtensions: true, // 保留原来的文件后缀
+				maxFieldsSize: 2 * 1024 * 1024, // 文件大小限制
+				onFileBegin: (name: string, file: File) => {
+					// 获取文件后缀
+					const ext = getUploadFileExt(file.originalFilename || '')
+					// // 最终要保存到的文件夹目录
+					const dir = path.join(__dirname, `../public/upload/${getUploadDirName()}`)
+					// // 检查文件夹是否存在如果不存在则新建文件夹
+					checkDirExist(dir)
+					// // 重新覆盖 file.path 属性
+					file.filepath = `${dir}/${getUploadFileName(ext)}`
+				}
+			}
 		}
 	},
 	// 数据库相关
