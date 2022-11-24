@@ -6,7 +6,7 @@ import collectErrorLogs from '../utils/collectErrorLogs'
 import response from '../utils/response'
 import { getFormData } from '../utils/tools'
 import userTips from '../errorTips/userTips'
-import userService from '../service/userService'
+import UserService from '../service/UserService'
 
 @Controller('/user')
 export default class UserController {
@@ -20,12 +20,11 @@ export default class UserController {
 			return
 		}
 		try {
-			const res = await userService.getUser({ userName })
+			const res = await UserService.getUser({ userName })
 			const queryData = res[0] as Array<{ userName: string }>
 			response.success(ctx, { repeat: queryData.length !== 0 })
 		} catch (error) {
-			const errorNumber = collectErrorLogs(error)
-			response.error(ctx, userTips.neibuError.msg, errorNumber)
+			response.error(ctx, userTips.neibuError.msg, collectErrorLogs(error))
 		}
 	}
 	// 注册
@@ -44,10 +43,10 @@ export default class UserController {
 
 		try {
 			//  取出最大的userId
-			const resUserId = await userService.queryMaxUserId()
+			const resUserId = await UserService.queryMaxUserId()
 			//  todo 现在queryMaxUserId 只是以当前时间作为最大id, 实际情况不允许如此，后续完善
 			const newUserId = resUserId + Math.floor(Math.random() * 1000)
-			await userService.createdUser({
+			await UserService.createdUser({
 				userId: String(newUserId),
 				userName,
 				password,
@@ -55,8 +54,7 @@ export default class UserController {
 			})
 			response.success(ctx)
 		} catch (error) {
-			const errorNumber = collectErrorLogs(error)
-			response.error(ctx, userTips.neibuError.msg, errorNumber)
+			response.error(ctx, userTips.neibuError.msg, collectErrorLogs(error))
 		}
 	}
 	// 登录
@@ -74,8 +72,8 @@ export default class UserController {
 		}
 
 		try {
-			const res = await userService.getLogin({ userName, password })
-			const queryData = res[0] as Array<{ userId: string }> // todo 后续要把这部分格式推断前移到 userService 内部
+			const res = await UserService.getLogin({ userName, password })
+			const queryData = res[0] as Array<{ userId: string }> // todo 后续要把这部分格式推断前移到 UserService 内部
 			if (queryData.length > 0) {
 				const token = sign({ userId: queryData[0].userId })
 				response.success(ctx, { token })
@@ -83,8 +81,7 @@ export default class UserController {
 				response.error(ctx, userTips.loginError.msg)
 			}
 		} catch (error) {
-			const errorNumber = collectErrorLogs(error)
-			response.error(ctx, userTips.neibuError.msg, errorNumber)
+			response.error(ctx, userTips.neibuError.msg, collectErrorLogs(error))
 		}
 	}
 	// 修改密码
@@ -102,13 +99,12 @@ export default class UserController {
 		}
 		const { userId } = ctx.user
 		try {
-			await userService.updateProfile(userId, {
+			await UserService.updateProfile(userId, {
 				password
 			})
 			response.success(ctx)
 		} catch (error) {
-			const errorNumber = collectErrorLogs(error)
-			response.error(ctx, userTips.neibuError.msg, errorNumber)
+			response.error(ctx, userTips.neibuError.msg, collectErrorLogs(error))
 		}
 	}
 }

@@ -1,3 +1,4 @@
+import { ArticleState } from '../types/article'
 import { poolPromise } from '../db'
 
 class Service {
@@ -12,8 +13,8 @@ class Service {
 		])
 	}
 	// 读取
-	getArticle(params: { id: string }) {
-		return poolPromise.query('SELECT title,content FROM article WHERE id = ?', [params.id])
+	getArticle(params: { id: string; userId: string; state: ArticleState }) {
+		return poolPromise.query('SELECT title,content FROM article WHERE id = ? or', [params.id])
 	}
 	// 修改
 	updateArticle(params: { id: string; userId: string; title: string; content: string }) {

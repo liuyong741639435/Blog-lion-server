@@ -1,6 +1,6 @@
 import { createHash } from 'crypto'
 import { poolPromise } from '../db'
-import { setValues } from './tool'
+import { getWhereOr, setValues } from './tool'
 
 interface createdUserParams {
 	userId: string
@@ -47,6 +47,10 @@ class Service {
 	updateProfile(userId: string, params: Profile) {
 		const res = setValues(params)
 		return poolPromise.query(`UPDATE user SET ${res.itemKey} WHERE userId = ?`, [...res.itemValue, userId])
+	}
+	getNickName(userIdList: Array<string>) {
+		const sqlWhere = getWhereOr('userId', userIdList)
+		return poolPromise.query(`SELECT nickName,userId  FROM user WHERE ${sqlWhere}`)
 	}
 }
 
