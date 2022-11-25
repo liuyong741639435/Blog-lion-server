@@ -111,4 +111,14 @@ export default class UserController {
 			response.error(ctx, userTips.neibuError.msg, errorNumber)
 		}
 	}
+	@RequestMapping({ url: '/userInfo', method: REQUEST_METHOD.GET, login: true })
+	async userInfo(ctx: Context) {
+		const { userId } = ctx.user
+		try {
+			await userService.getUserInfo(userId)
+			response.success(ctx)
+		} catch (error) {
+			response.error(ctx, userTips.neibuError.msg, collectErrorLogs(error))
+		}
+	}
 }

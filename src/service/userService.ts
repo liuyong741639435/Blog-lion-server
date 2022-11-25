@@ -48,6 +48,9 @@ class Service {
 		const res = setValues(params)
 		return poolPromise.query(`UPDATE user SET ${res.itemKey} WHERE userId = ?`, [...res.itemValue, userId])
 	}
+	getUserInfo(userId: string) {
+		return poolPromise.query(`SELECT * FROM user WHERE userId = ?`, [userId])
+	}
 }
 
 export default new Service()
