@@ -1,5 +1,4 @@
 import { REQUEST_METHOD } from '../../types/enum'
-import { useLoginIntercept } from '../../utils/loginIntercept'
 
 export const controllers: Array<ControllerRouter> = []
 
@@ -25,7 +24,6 @@ export function Controller(path = '') {
 export function RequestMapping({ url = '', method = REQUEST_METHOD.GET, middleware = [], login = false }: ControllerRouter) {
 	return function (target: any, name: string) {
 		const path = url ? url : `/${name}`
-		useLoginIntercept(path)
 		controllers.push({
 			url: path,
 			method,

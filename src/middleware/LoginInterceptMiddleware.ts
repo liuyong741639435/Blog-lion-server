@@ -21,6 +21,7 @@ export default function (ctx: Context, next: Next) {
 		const tokenData = token.split(' ').pop() || ''
 		const res = verify(tokenData)
 		if (res.error) {
+			ctx.status = 401
 			response.error(ctx, 'token校验失败，请登录')
 		} else {
 			const data = res.data as User
@@ -30,6 +31,7 @@ export default function (ctx: Context, next: Next) {
 				}
 				return next()
 			} catch (error) {
+				ctx.status = 401
 				response.error(ctx, 'token校验失败，请登录')
 			}
 		}

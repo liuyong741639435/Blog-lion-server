@@ -19,12 +19,13 @@ export default [
         )
         `
 	},
-	// id表id，userId用户id, title标题，content内容，date新建时间， state状态
+	// id表id， aId文章id, userId用户id, title标题，content内容，date新建时间， state状态
 	{
 		title: 'article',
 		sql: `
                 CREATE TABLE IF NOT EXISTS article (
                     id INT PRIMARY KEY AUTO_INCREMENT,
+                    aId VARCHAR(255) NOT NULL,
                     userId VARCHAR(255) NOT NULL,
                     title VARCHAR(255) NOT NULL,
                     content TEXT NOT NULL,

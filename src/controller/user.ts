@@ -6,7 +6,7 @@ import collectErrorLogs from '../utils/collectErrorLogs'
 import response from '../utils/response'
 import { getFormData } from '../utils/tools'
 import userTips from '../errorTips/userTips'
-import UserService from '../service/UserService'
+import UserService from '../service/userService'
 
 @Controller('/user')
 export default class UserController {
@@ -112,7 +112,11 @@ export default class UserController {
 		const { userId } = ctx.user
 		try {
 			await UserService.getUserInfo(userId)
-			response.success(ctx)
+			response.success(ctx, {
+				userId: '',
+				nickName: '',
+				jobTitle: ''
+			})
 		} catch (error) {
 			response.error(ctx, userTips.neibuError.msg, collectErrorLogs(error))
 		}
