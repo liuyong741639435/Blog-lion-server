@@ -1,5 +1,6 @@
 import { ArticleState } from '../types/article'
 import { poolPromise } from '../db'
+import { getWhereOr } from './tool'
 
 class Service {
 	// 创建
@@ -30,11 +31,20 @@ class Service {
 	// `SELECT a.id,a.title,a.userId,a.date,u.nickName,u.url FROM article a LEFT OUTER JOIN user u on a.userId = u.userId LIMIT ?,?`
 	getArticleList(params: { currentPage: number; pageSize: number; state: number }) {
 		const currentNumber = (params.currentPage - 1) * params.pageSize
-		return poolPromise.query('SELECT id,title,userId,date FROM article WHERE state=? LIMIT ?,?', [
+		return poolPromise.query('SELECT title,userId,date FROM article WHERE state=? LIMIT ?,?', [
 			params.state,
 			currentNumber,
 			params.pageSize
 		])
+	}
+	// 获取自身的文章
+	getArticleByUser(params: { userId: string; states: number[] }) {
+		if (params.states.length === 0) {
+			return poolPromise.query('SELECT FROM article')
+		} else {
+			const where = getWhereOr('state', params.states)
+			return poolPromise.query(`SELECT FROM article WHERE ${where}`)
+		}
 	}
 	// 删除
 	deleteArticle(params: { aId: string; userId: string }) {

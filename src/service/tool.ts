@@ -13,6 +13,6 @@ export function setValues(obj: any) {
 	}
 }
 
-export function getWhereOr(key: string, list: Array<string>) {
+export function getWhereOr(key: string, list: Array<string | number>) {
 	return list.map(item => `${key}=${item}`).join(' or ')
 }

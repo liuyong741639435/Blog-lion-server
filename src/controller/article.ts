@@ -134,27 +134,47 @@ export default class ArticleController {
 			response.error(ctx, articleTips.neibuError, collectErrorLogs(error))
 		}
 	}
+	// 查询自己的文章，通过状态吗，可以查询不同状态的文章
+	@RequestMapping({ url: '/getArticleListByUser', method: REQUEST_METHOD.GET, login: true })
+	async getArticleListByUser(ctx: Context) {
+		const { state } = getFormData(ctx)
+		const { userId } = ctx.user
+		// state 可以为 null, number, [number]
+		const states: number[] = state === null ? [] : Array.isArray(state) ? state : [state]
+		for (const state of states) {
+			if (!Object.values(ArticleState).includes(state)) {
+				// 不合法
+				response.error(ctx, articleTips.articleState)
+				return
+			}
+		}
+		try {
+			const res = await articleService.getArticleByUser({
+				userId,
+				states
+			})
+			console.log(res)
+		} catch (error) {
+			response.error(ctx, articleTips.neibuError, collectErrorLogs(error))
+		}
+	}
 	// 设置文章是否公开
 	@RequestMapping({ url: '/setArticleState', method: REQUEST_METHOD.POST, login: true })
 	async setArticleState(ctx: Context) {
-		console.log('setArticleState')
 		const { aId, state } = getFormData(ctx)
-		console.log(aId, state)
 		const { userId } = ctx.user
 		if (!Object.values(ArticleState).includes(state)) {
 			// 不合法
-			response.error(ctx, articleTips.setArticleState)
+			response.error(ctx, articleTips.articleState)
 			return
 		}
 		try {
-			console.log(userId, aId, state)
 			const res = await articleService.setArticleState({
 				userId,
 				aId,
 				state
 			})
 			const resultSetHeader = res[0] as ResultSetHeader
-			console.log(resultSetHeader.affectedRows)
 			if (resultSetHeader.affectedRows > 0) {
 				response.success(ctx)
 			}
