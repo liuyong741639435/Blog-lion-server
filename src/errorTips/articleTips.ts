@@ -9,7 +9,7 @@ export default {
 		msg: '内容只支持100-20000个汉字'
 	},
 	neibuError: '内部错误',
-	setArticleState: '参数合法',
+	articleState: '状态码参数不合法',
 	editArticleNew: '新建文章失败',
 	editArticle: '编辑文章失败'
 }

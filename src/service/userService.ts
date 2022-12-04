@@ -52,8 +52,8 @@ class Service {
 		return poolPromise.query(`SELECT * FROM user WHERE userId = ?`, [userId])
 	}
 	getNickName(userIdList: Array<string>) {
-		const sqlWhere = getWhereOr('userId', userIdList)
-		return poolPromise.query(`SELECT nickName,userId  FROM user WHERE ${sqlWhere}`)
+		const where = getWhereOr('userId', userIdList)
+		return poolPromise.query(`SELECT nickName,userId  FROM user WHERE ${where}`)
 	}
 }
 
