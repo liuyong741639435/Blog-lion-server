@@ -27,9 +27,9 @@ export default class ArticleController {
 			})
 			const data = res[0] as any
 			response.success(ctx, {
-				userId: data.data,
-				title: data.title,
-				content: data.content
+				userId: data[0].data,
+				title: data[0].title,
+				content: data[0].content
 			})
 		} catch (error: any) {
 			response.error(ctx, error)

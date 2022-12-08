@@ -16,7 +16,7 @@ class Service {
 	}
 	// 读取
 	getArticle(params: { aId: string; userId: string; state: ArticleState }) {
-		return poolPromise.query('SELECT title,content FROM article WHERE aId = ? or', [params.aId])
+		return poolPromise.query('SELECT title,content FROM article WHERE aId = ?', [params.aId])
 	}
 	// 修改
 	updateArticle(params: { aId: string; userId: string; title: string; content: string }) {
@@ -31,7 +31,7 @@ class Service {
 	// `SELECT a.id,a.title,a.userId,a.date,u.nickName,u.url FROM article a LEFT OUTER JOIN user u on a.userId = u.userId LIMIT ?,?`
 	getArticleList(params: { currentPage: number; pageSize: number; state: number }) {
 		const currentNumber = (params.currentPage - 1) * params.pageSize
-		return poolPromise.query('SELECT title,userId,date FROM article WHERE state=? LIMIT ?,?', [
+		return poolPromise.query('SELECT aId,title,userId,date FROM article WHERE state=? LIMIT ?,?', [
 			params.state,
 			currentNumber,
 			params.pageSize
