@@ -16,8 +16,8 @@ interface Profile {
 	company?: string
 	blogAddress?: string
 	description?: string
-	createDate?: string
-	updateDate?: string
+	createDate?: Number
+	updateDate?: Number
 }
 
 class Service {

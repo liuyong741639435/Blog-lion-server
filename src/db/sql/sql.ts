@@ -19,7 +19,7 @@ export default [
         )
         `
 	},
-	// id表id， aId文章id, userId用户id, title标题，content内容，date新建时间， state状态
+	// id表id， aId文章id, userId用户id, title标题，content内容, state状态，supportCount点赞数，commentCount评论数, createDate创建时间，updateDate更新时间
 	{
 		title: 'article',
 		sql: `
@@ -29,8 +29,11 @@ export default [
                     userId VARCHAR(255) NOT NULL,
                     title VARCHAR(255) NOT NULL,
                     content TEXT NOT NULL,
-                    date BIGINT NOT NULL,
-                    state TINYINT
+                    state TINYINT,
+                    supportCount BIGINT,
+                    commentCount BIGINT,
+                    createDate BIGINT NOT NULL,
+                    updateDate BIGINT NOT NULL
                 )
             `
 	}

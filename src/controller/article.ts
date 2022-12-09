@@ -23,7 +23,7 @@ export default class ArticleController {
 				userId,
 				state: ArticleState.PUBLIC
 			})
-			res.length > 0 ? response.success(ctx, { title: res[0].title, content: res[0].content }) : response.error(ctx, articleTips.getArticle)
+			res.length > 0 ? response.success(ctx, { title: res[0].title, content: res[0].content }) : response.error(ctx)
 		} catch (error: any) {
 			response.error(ctx, error)
 		}
@@ -46,7 +46,7 @@ export default class ArticleController {
 				if (affectedRows > 1) {
 					response.success(ctx)
 				} else {
-					response.error(ctx, articleTips.editArticle)
+					response.error(ctx)
 				}
 			} catch (error) {
 				response.error(ctx, articleTips.neibuError, collectErrorLogs(error))
@@ -66,7 +66,7 @@ export default class ArticleController {
 				if (affectedRows > 0) {
 					response.success(ctx, { aId })
 				} else {
-					response.error(ctx, articleTips.editArticleNew)
+					response.error(ctx)
 				}
 			} catch (error) {
 				response.error(ctx, articleTips.neibuError, collectErrorLogs(error))
@@ -107,7 +107,7 @@ export default class ArticleController {
 			response.error(ctx, articleTips.neibuError, collectErrorLogs(error))
 		}
 	}
-	// 查询自己的文章，通过状态吗，可以查询不同状态的文章
+	// 查询自己的文章列表，通过状态码，可以查询不同状态的文章
 	@RequestMapping({ url: '/getArticleListByUser', method: REQUEST_METHOD.GET, login: true })
 	async getArticleListByUser(ctx: Context) {
 		const { state } = getFormData(ctx)

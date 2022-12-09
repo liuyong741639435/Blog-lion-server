@@ -105,17 +105,45 @@ export default class UserController {
 			response.error(ctx, userTips.neibuError.msg, collectErrorLogs(error))
 		}
 	}
-	// todo
+	// 获取用户信息
 	@RequestMapping({ url: '/userInfo', method: REQUEST_METHOD.GET, login: true })
 	async userInfo(ctx: Context) {
+		const userId = getFormData(ctx).userId || ctx.user.userId
+		try {
+			const res = await UserService.getUserInfo(userId)
+			if (res.length > 0) {
+				const { userId, nickName, jobTitle, company, blogAddress, description, createDate } = res[0]
+				response.success(ctx, {
+					userId,
+					nickName,
+					jobTitle,
+					company,
+					blogAddress,
+					description,
+					createDate
+				})
+			} else {
+				response.error(ctx)
+			}
+		} catch (error) {
+			response.error(ctx, userTips.neibuError.msg, collectErrorLogs(error))
+		}
+	}
+	// 修改自身用户信息
+	@RequestMapping({ url: '/updateUserInfo', method: REQUEST_METHOD.POST, login: true })
+	async updateUserInfo(ctx: Context) {
+		const { nickName, jobTitle, company, blogAddress, description } = getFormData(ctx)
 		const { userId } = ctx.user
 		try {
-			await UserService.getUserInfo(userId)
-			response.success(ctx, {
-				userId: '',
-				nickName: '',
-				jobTitle: ''
+			const { affectedRows } = await UserService.updateProfile(userId, {
+				nickName,
+				jobTitle,
+				company,
+				blogAddress,
+				description,
+				updateDate: new Date().getTime()
 			})
+			affectedRows > 0 ? response.success(ctx) : response.error(ctx)
 		} catch (error) {
 			response.error(ctx, userTips.neibuError.msg, collectErrorLogs(error))
 		}
