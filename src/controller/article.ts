@@ -5,8 +5,6 @@ import { REQUEST_METHOD } from '../types/enum'
 import collectErrorLogs from '../utils/collectErrorLogs'
 import response from '../utils/response'
 import { getFormData } from '../utils/tools'
-import { ResultSetHeader } from 'mysql2'
-import UserService from '../service/userService'
 import { ArticleState } from '../types/article'
 import articleService from '../service/articleService'
 @Controller('/article')
@@ -25,12 +23,7 @@ export default class ArticleController {
 				userId,
 				state: ArticleState.PUBLIC
 			})
-			const data = res[0] as any
-			response.success(ctx, {
-				userId: data[0].data,
-				title: data[0].title,
-				content: data[0].content
-			})
+			res.length > 0 ? response.success(ctx, { title: res[0].title, content: res[0].content }) : response.error(ctx, articleTips.getArticle)
 		} catch (error: any) {
 			response.error(ctx, error)
 		}
@@ -44,14 +37,13 @@ export default class ArticleController {
 		if (aId) {
 			// 更新文章
 			try {
-				const res = await articleService.updateArticle({
+				const { affectedRows } = await articleService.updateArticle({
 					aId,
 					userId,
 					title,
 					content
 				})
-				const resultSetHeader = res[0] as ResultSetHeader
-				if (resultSetHeader.affectedRows === 0) {
+				if (affectedRows > 1) {
 					response.success(ctx)
 				} else {
 					response.error(ctx, articleTips.editArticle)
@@ -63,7 +55,7 @@ export default class ArticleController {
 			const aId = `${new Date().getTime()}${Math.floor(Math.random() * 8999 + 1000)}`
 			// 新建文章
 			try {
-				const res = await articleService.createArticle({
+				const { affectedRows } = await articleService.createArticle({
 					userId,
 					aId,
 					title,
@@ -71,8 +63,7 @@ export default class ArticleController {
 					state: ArticleState.PRIVATE,
 					date: new Date().getTime()
 				})
-				const resultSetHeader = res[0] as ResultSetHeader
-				if (resultSetHeader.affectedRows === 1) {
+				if (affectedRows > 0) {
 					response.success(ctx, { aId })
 				} else {
 					response.error(ctx, articleTips.editArticleNew)
@@ -89,14 +80,11 @@ export default class ArticleController {
 		const { aId } = getFormData(ctx)
 		const { userId } = ctx.user
 		try {
-			const res = await articleService.deleteArticle({
+			const { affectedRows } = await articleService.deleteArticle({
 				aId,
 				userId
 			})
-			const resultSetHeader = res[0] as ResultSetHeader
-			resultSetHeader.affectedRows > 0
-				? response.success(ctx, `删除的条数:${resultSetHeader.affectedRows}`)
-				: response.error(ctx, `删除的条数:${resultSetHeader.affectedRows}`)
+			affectedRows > 0 ? response.success(ctx, `删除的条数:${affectedRows}`) : response.error(ctx, `删除的条数:${affectedRows}`)
 		} catch (error) {
 			response.error(ctx, articleTips.neibuError, collectErrorLogs(error))
 		}
@@ -114,22 +102,7 @@ export default class ArticleController {
 				pageSize,
 				state: ArticleState.PUBLIC
 			})
-			const tempdata = res[0] as Array<any>
-			if (tempdata.length > 0) {
-				const userIdList = tempdata.map(item => item.userId)
-				const res = await UserService.getNickName(userIdList)
-				const data = res[0] as Array<any>
-				const resData = tempdata.map((item: any) => {
-					const nickName = data.find(item => item.userId)?.nickName
-					return {
-						...item,
-						nickName
-					}
-				})
-				response.success(ctx, resData)
-			} else {
-				response.success(ctx, [])
-			}
+			response.success(ctx, res)
 		} catch (error) {
 			response.error(ctx, articleTips.neibuError, collectErrorLogs(error))
 		}
@@ -169,13 +142,12 @@ export default class ArticleController {
 			return
 		}
 		try {
-			const res = await articleService.setArticleState({
+			const { affectedRows } = await articleService.setArticleState({
 				userId,
 				aId,
 				state
 			})
-			const resultSetHeader = res[0] as ResultSetHeader
-			if (resultSetHeader.affectedRows > 0) {
+			if (affectedRows > 0) {
 				response.success(ctx)
 			}
 		} catch (error) {

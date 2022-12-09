@@ -1,6 +1,7 @@
 import { createHash } from 'crypto'
+import { OkPacket, RowDataPacket } from 'mysql2'
 import { poolPromise } from '../db'
-import { getWhereOr, setValues } from './tool'
+import { setValues } from './tool'
 
 interface createdUserParams {
 	userId: string
@@ -20,40 +21,60 @@ interface Profile {
 }
 
 class Service {
-	queryMaxUserId() {
-		// 查库，找出最大的userID / 先用 new Date().getTime()代替
-		// todo
-		return new Date().getTime()
-	}
-	getUser(params: { userName: string }) {
-		return poolPromise.query('SELECT userName FROM user WHERE  userName = ?', [params.userName])
-	}
-	createdUser(params: createdUserParams) {
+	/* 增 */
+	async createdUser(params: createdUserParams) {
 		const time = new Date().getTime()
 		const password = createHash('md5').update(params.password).digest('hex')
-		return poolPromise.query('INSERT INTO user(userId,userName,password,nickName,createDate,updateDate) VALUES(?,?,?,?,?,?)', [
-			params.userId,
-			params.userName,
-			password,
-			params.nickName,
-			time,
-			time
-		])
+		const res = await poolPromise.query<OkPacket>(
+			'INSERT INTO user(userId,userName,password,nickName,createDate,updateDate) VALUES(?,?,?,?,?,?)',
+			[params.userId, params.userName, password, params.nickName, time, time]
+		)
+		return res[0]
 	}
-	getLogin(params: { userName: string; password: string }) {
+	/* 删 */
+	/* 改 */
+	async updateProfile(userId: string, params: Profile) {
+		const Values = setValues(params)
+		const res = await poolPromise.query<OkPacket>(`UPDATE user SET ${Values.itemKey} WHERE userId = ?`, [...Values.itemValue, userId])
+		return res[0]
+	}
+	/* 查 */
+	async queryMaxUserId() {
+		const res = await poolPromise.query<RowDataPacket[]>('SELECT max(userId) FROM user')
+		return res[0].map(({ userId }) => ({
+			userId
+		}))
+	}
+	async getUser(params: { userName: string }) {
+		const res = await poolPromise.query<RowDataPacket[]>('SELECT userId FROM user WHERE  userName = ?', [params.userName])
+		return res[0].map(({ userId }) => ({
+			userId
+		}))
+	}
+	async getLogin(params: { userName: string; password: string }) {
 		const password = createHash('md5').update(params.password).digest('hex')
-		return poolPromise.query('SELECT userId FROM user WHERE  userName = ? AND password = ?', [params.userName, password])
+		const res = await poolPromise.query<RowDataPacket[]>('SELECT userId FROM user WHERE  userName = ? AND password = ?', [
+			params.userName,
+			password
+		])
+		return res[0].map(({ userId }) => ({
+			userId
+		}))
 	}
-	updateProfile(userId: string, params: Profile) {
-		const res = setValues(params)
-		return poolPromise.query(`UPDATE user SET ${res.itemKey} WHERE userId = ?`, [...res.itemValue, userId])
-	}
-	getUserInfo(userId: string) {
-		return poolPromise.query(`SELECT * FROM user WHERE userId = ?`, [userId])
-	}
-	getNickName(userIdList: Array<string>) {
-		const where = getWhereOr('userId', userIdList)
-		return poolPromise.query(`SELECT nickName,userId  FROM user WHERE ${where}`)
+	async getUserInfo(userId: string) {
+		const res = await poolPromise.query<RowDataPacket[]>(
+			`SELECT userId,nickName,jobTitle,company,blogAddress,description,createDate FROM user WHERE userId = ?`,
+			[userId]
+		)
+		return res[0].map(({ userId, nickName, jobTitle, company, blogAddress, description, createDate }) => ({
+			userId,
+			nickName,
+			jobTitle,
+			company,
+			blogAddress,
+			description,
+			createDate
+		}))
 	}
 }
 

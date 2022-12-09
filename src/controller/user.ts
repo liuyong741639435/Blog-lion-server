@@ -21,8 +21,7 @@ export default class UserController {
 		}
 		try {
 			const res = await UserService.getUser({ userName })
-			const queryData = res[0] as Array<{ userName: string }>
-			response.success(ctx, { repeat: queryData.length !== 0 })
+			res.length > 0 ? response.success(ctx) : response.error(ctx)
 		} catch (error) {
 			response.error(ctx, userTips.neibuError.msg, collectErrorLogs(error))
 		}
@@ -43,14 +42,14 @@ export default class UserController {
 
 		try {
 			//  取出最大的userId
-			const resUserId = await UserService.queryMaxUserId()
-			//  todo 现在queryMaxUserId 只是以当前时间作为最大id, 实际情况不允许如此，后续完善
-			const newUserId = resUserId + Math.floor(Math.random() * 1000)
+			const res = await UserService.queryMaxUserId()
+			const userId = res[0].userId ?? 1000000
+			const newUserId = userId + Math.floor(Math.random() * 1000)
 			await UserService.createdUser({
 				userId: String(newUserId),
 				userName,
 				password,
-				nickName: `新用户${newUserId}`
+				nickName: `新用户${newUserId}` // todu 找资源，随机生产昵称
 			})
 			response.success(ctx)
 		} catch (error) {
@@ -72,10 +71,9 @@ export default class UserController {
 		}
 
 		try {
-			const res = await UserService.getLogin({ userName, password })
-			const queryData = res[0] as Array<{ userId: string }> // todo 后续要把这部分格式推断前移到 UserService 内部
-			if (queryData.length > 0) {
-				const token = sign({ userId: queryData[0].userId })
+			const userId = await UserService.getLogin({ userName, password })
+			if (userId) {
+				const token = sign({ userId: userId })
 				response.success(ctx, { token })
 			} else {
 				response.error(ctx, userTips.loginError.msg)
@@ -107,6 +105,7 @@ export default class UserController {
 			response.error(ctx, userTips.neibuError.msg, collectErrorLogs(error))
 		}
 	}
+	// todo
 	@RequestMapping({ url: '/userInfo', method: REQUEST_METHOD.GET, login: true })
 	async userInfo(ctx: Context) {
 		const { userId } = ctx.user
