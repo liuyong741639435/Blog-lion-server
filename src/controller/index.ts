@@ -1,5 +1,6 @@
-import UserController from './user'
+import userController from './user'
+import articleController from './article'
 import filesController from './files'
-import ArticleController from './article'
+import testController from './test'
 
-export { UserController, ArticleController, filesController }
+export { userController, articleController, filesController, testController }
