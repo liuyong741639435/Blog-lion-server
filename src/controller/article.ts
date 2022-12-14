@@ -7,21 +7,34 @@ import response from '../utils/response'
 import { getFormData } from '../utils/tools'
 import { ArticleState } from '../types/article'
 import articleService from '../service/articleService'
+import Cache from 'utils/cache'
+
+const cache = new Cache(async (key: string, value: any) => {
+	console.log('写入sql', key, value)
+	try {
+		await articleService.setArticleBrowseCount({
+			aId: key,
+			browseCount: value
+		})
+		console.error(`写入成功(${key}|${value})`)
+	} catch (error) {
+		console.error('写入失败')
+	}
+}, 1000)
+
 @Controller('/article')
 export default class ArticleController {
-	// 查询文章
-	@RequestMapping({ url: '/getArticle', method: REQUEST_METHOD.GET, login: true })
-	async getArticle(ctx: Context) {
+	// 查询自身文章
+	@RequestMapping({ url: '/getArticleByUser', method: REQUEST_METHOD.GET, login: true })
+	async getArticleByUser(ctx: Context) {
 		// 取值
-		const { aId } = getFormData(ctx) // 文章aId
-		// 校验 后续可能需要有权限才能查看， todo 自己的文章随便看，别人的文章需要是公开状态
+		const { aId } = getFormData(ctx)
 		const { userId } = ctx.user
 		// 查库
 		try {
-			const res = await articleService.getArticle({
+			const res = await articleService.getArticleByUser({
 				aId,
-				userId,
-				state: ArticleState.PUBLIC
+				userId
 			})
 			res.length > 0 ? response.success(ctx, { title: res[0].title, content: res[0].content }) : response.error(ctx)
 		} catch (error: any) {
@@ -73,7 +86,6 @@ export default class ArticleController {
 			}
 		}
 	}
-
 	// 删除文章
 	@RequestMapping({ url: '/deleteArticle', method: REQUEST_METHOD.PUT, login: true })
 	async deleteArticle(ctx: Context) {
@@ -122,7 +134,7 @@ export default class ArticleController {
 			}
 		}
 		try {
-			const res = await articleService.getArticleByUser({
+			const res = await articleService.getArticleListByUser({
 				userId,
 				states
 			})
@@ -152,6 +164,32 @@ export default class ArticleController {
 			}
 		} catch (error) {
 			response.error(ctx, articleTips.neibuError, collectErrorLogs(error))
+		}
+	}
+	// 访问他人文章
+	@RequestMapping({ url: '/getArticle', method: REQUEST_METHOD.GET, login: true })
+	async getArticle(ctx: Context) {
+		// 取值
+		const aId = getFormData(ctx).aId || '-'
+		const { userId } = ctx.user
+		// 查库
+		try {
+			const res = await articleService.getArticle({
+				aId,
+				userId,
+				state: ArticleState.PUBLIC
+			})
+			// 访问量加1
+			if (res.length > 0) {
+				const { title, content, browseCount, supportCount, commentCount } = res[0]
+				const value = cache.get(aId) ?? browseCount ?? 0
+				cache.set(aId, value + 1)
+				response.success(ctx, { title, content, browseCount, supportCount, commentCount })
+			} else {
+				response.error(ctx)
+			}
+		} catch (error: any) {
+			response.error(ctx, error)
 		}
 	}
 }

@@ -39,32 +39,53 @@ class Service {
 		])
 		return res[0]
 	}
+	async setArticleBrowseCount(params: { aId: string; browseCount: number }) {
+		const res = await poolPromise.query<OkPacket>('UPDATE article SET browseCount=? WHERE aId=?', [params.browseCount, params.aId])
+		return res[0]
+	}
 	/* 查 */
 	// 读取
-	async getArticle(params: { aId: string; userId: string; state: ArticleState }) {
-		const res = await poolPromise.query<RowDataPacket[]>('SELECT title,content FROM article WHERE aId = ?', [params.aId])
+	async getArticleByUser(params: { aId: string; userId: string }) {
+		const res = await poolPromise.query<RowDataPacket[]>('SELECT title,content FROM article WHERE aId = ? AND userId = ?', [
+			params.aId,
+			params.userId
+		])
 		return res[0].map(({ title, content }) => ({
 			title,
 			content
+		}))
+	}
+	async getArticle(params: { aId: string; userId: string; state: ArticleState }) {
+		const res = await poolPromise.query<RowDataPacket[]>(
+			'SELECT title,content,browseCount,supportCount,commentCount FROM article WHERE aId = ? AND state = ?',
+			[params.aId, params.state]
+		)
+		return res[0].map(({ title, content, browseCount, supportCount, commentCount }) => ({
+			title,
+			content,
+			browseCount,
+			supportCount,
+			commentCount
 		}))
 	}
 	// 获取文章列表, 后续是要搜索,或者分类 todo
 	async getArticleList(params: { currentPage: number; pageSize: number; state: number }) {
 		const currentNumber = (params.currentPage - 1) * params.pageSize
 		const res = await poolPromise.query<RowDataPacket[]>(
-			'SELECT a.aId,a.title,a.userId,a.updateDate,u.nickName FROM article a LEFT OUTER JOIN user u on a.userId = u.userId WHERE state=? LIMIT ?,?',
+			'SELECT a.aId,a.title,a.userId,a.updateDate,u.nickName,u.iconUrl FROM article a LEFT OUTER JOIN user u on a.userId = u.userId WHERE state=? LIMIT ?,?',
 			[params.state, currentNumber, params.pageSize]
 		)
-		return res[0].map(({ aId, title, userId, nickName, updateDate }) => ({
+		return res[0].map(({ aId, title, userId, nickName, iconUrl, updateDate }) => ({
 			aId,
 			title,
 			userId,
 			nickName,
+			iconUrl,
 			updateDate
 		}))
 	}
 	// 获取自身的文章列表
-	async getArticleByUser(params: { userId: string; states: number[] }) {
+	async getArticleListByUser(params: { userId: string; states: number[] }) {
 		let sql = 'SELECT aId,title,userId,updateDate FROM article'
 		if (params.states.length > 0) {
 			const where = getWhereOr('state', params.states)

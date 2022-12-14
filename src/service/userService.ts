@@ -63,12 +63,13 @@ class Service {
 	}
 	async getUserInfo(userId: string) {
 		const res = await poolPromise.query<RowDataPacket[]>(
-			`SELECT userId,nickName,jobTitle,company,blogAddress,description,createDate FROM user WHERE userId = ?`,
+			`SELECT userId,nickName,iconUrl,jobTitle,company,blogAddress,description,createDate FROM user WHERE userId = ?`,
 			[userId]
 		)
-		return res[0].map(({ userId, nickName, jobTitle, company, blogAddress, description, createDate }) => ({
+		return res[0].map(({ userId, nickName, iconUrl, jobTitle, company, blogAddress, description, createDate }) => ({
 			userId,
 			nickName,
+			iconUrl,
 			jobTitle,
 			company,
 			blogAddress,
