@@ -1,4 +1,4 @@
-import articleTips from '../errorTips/articleTips'
+import currencyTips from '../errorTips/currency'
 import { Context } from 'koa'
 import { Controller, RequestMapping } from '../common/decorator/decorator'
 import { REQUEST_METHOD } from '../types/enum'
@@ -37,8 +37,8 @@ export default class ArticleController {
 				userId
 			})
 			res.length > 0 ? response.success(ctx, { title: res[0].title, content: res[0].content }) : response.error(ctx)
-		} catch (error: any) {
-			response.error(ctx, error)
+		} catch (error) {
+			response.error(ctx, currencyTips.neibuError, collectErrorLogs(error))
 		}
 	}
 	// 编辑文章
@@ -62,7 +62,7 @@ export default class ArticleController {
 					response.error(ctx)
 				}
 			} catch (error) {
-				response.error(ctx, articleTips.neibuError, collectErrorLogs(error))
+				response.error(ctx, currencyTips.neibuError, collectErrorLogs(error))
 			}
 		} else {
 			const aId = `${new Date().getTime()}${Math.floor(Math.random() * 8999 + 1000)}`
@@ -82,7 +82,7 @@ export default class ArticleController {
 					response.error(ctx)
 				}
 			} catch (error) {
-				response.error(ctx, articleTips.neibuError, collectErrorLogs(error))
+				response.error(ctx, currencyTips.neibuError, collectErrorLogs(error))
 			}
 		}
 	}
@@ -98,7 +98,7 @@ export default class ArticleController {
 			})
 			affectedRows > 0 ? response.success(ctx, `删除的条数:${affectedRows}`) : response.error(ctx, `删除的条数:${affectedRows}`)
 		} catch (error) {
-			response.error(ctx, articleTips.neibuError, collectErrorLogs(error))
+			response.error(ctx, currencyTips.neibuError, collectErrorLogs(error))
 		}
 	}
 	// 查询所有文章简略信息
@@ -116,7 +116,7 @@ export default class ArticleController {
 			})
 			response.success(ctx, res)
 		} catch (error) {
-			response.error(ctx, articleTips.neibuError, collectErrorLogs(error))
+			response.error(ctx, currencyTips.neibuError, collectErrorLogs(error))
 		}
 	}
 	// 查询自己的文章列表，通过状态码，可以查询不同状态的文章
@@ -129,7 +129,7 @@ export default class ArticleController {
 		for (const state of states) {
 			if (!Object.values(ArticleState).includes(state)) {
 				// 不合法
-				response.error(ctx, articleTips.articleState)
+				response.error(ctx, currencyTips.stateError)
 				return
 			}
 		}
@@ -140,7 +140,7 @@ export default class ArticleController {
 			})
 			console.log(res)
 		} catch (error) {
-			response.error(ctx, articleTips.neibuError, collectErrorLogs(error))
+			response.error(ctx, currencyTips.neibuError, collectErrorLogs(error))
 		}
 	}
 	// 设置文章是否公开
@@ -150,7 +150,7 @@ export default class ArticleController {
 		const { userId } = ctx.user
 		if (!Object.values(ArticleState).includes(state)) {
 			// 不合法
-			response.error(ctx, articleTips.articleState)
+			response.error(ctx, currencyTips.stateError)
 			return
 		}
 		try {
@@ -163,7 +163,7 @@ export default class ArticleController {
 				response.success(ctx)
 			}
 		} catch (error) {
-			response.error(ctx, articleTips.neibuError, collectErrorLogs(error))
+			response.error(ctx, currencyTips.neibuError, collectErrorLogs(error))
 		}
 	}
 	// 访问他人文章
@@ -188,8 +188,8 @@ export default class ArticleController {
 			} else {
 				response.error(ctx)
 			}
-		} catch (error: any) {
-			response.error(ctx, error)
+		} catch (error) {
+			response.error(ctx, currencyTips.neibuError, collectErrorLogs(error))
 		}
 	}
 }

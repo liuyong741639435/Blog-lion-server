@@ -39,6 +39,7 @@ export default [
                 ) DEFAULT CHARSET=utf8;
             `
 	},
+	// 粉丝 关注 todo后续要实现拉黑屏蔽等
 	{
 		title: 'follower',
 		sql: `CREATE TABLE IF NOT EXISTS follower (
@@ -46,6 +47,20 @@ export default [
                 userId varchar(200) NOT NULL,
                 followerUserId varchar(200) NOT NULL,
                 PRIMARY KEY (id)
+              ) DEFAULT CHARSET=utf8;
+            `
+	},
+	// 评论
+	{
+		title: 'comments',
+		sql: `CREATE TABLE IF NOT EXISTS comments (
+                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                aId    BIGINT NOT NULL,
+                parentId  BIGINT,
+                content   TEXT   NOT NULL,
+                userId    BIGINT NOT NULL,
+                date      BIGINT NOT NULL,
+                state TINYINT
               ) DEFAULT CHARSET=utf8;
             `
 	}

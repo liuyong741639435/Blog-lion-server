@@ -2,6 +2,6 @@ import userController from './user'
 import articleController from './article'
 import filesController from './files'
 import creatorController from './creator'
-import testController from './test'
+import interactionBetweenUsers from './interactionBetweenUsers'
 
-export { userController, articleController, filesController, creatorController, testController }
+export { userController, articleController, filesController, interactionBetweenUsers, creatorController }

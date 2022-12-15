@@ -7,7 +7,5 @@ export default {
 	content: {
 		regular: /^.{100,20000}$/,
 		msg: '内容只支持100-20000个汉字'
-	},
-	neibuError: '内部错误',
-	articleState: '状态码参数不合法'
+	}
 }
