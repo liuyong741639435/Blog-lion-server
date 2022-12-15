@@ -20,7 +20,7 @@ export default [
         ) DEFAULT CHARSET=utf8;
         `
 	},
-	// id表id， aId文章id, userId用户id, title标题，content内容, state状态，browseCount浏览数,supportCount点赞数，commentCount评论数, createDate创建时间，updateDate更新时间
+	// id表id， aId文章id, userId用户id, title标题，content内容, introduction文章简介, state状态，browseCount浏览数,supportCount点赞数，commentCount评论数, createDate创建时间，updateDate更新时间
 	{
 		title: 'article',
 		sql: `
@@ -30,6 +30,7 @@ export default [
                     userId VARCHAR(255) NOT NULL,
                     title VARCHAR(255) NOT NULL,
                     content TEXT NOT NULL,
+                    introduction  TEXT,
                     state TINYINT,
                     browseCount BIGINT,
                     supportCount BIGINT,
@@ -39,6 +40,7 @@ export default [
                 ) DEFAULT CHARSET=utf8;
             `
 	},
+	// 粉丝 关注 todo后续要实现拉黑屏蔽等
 	{
 		title: 'follower',
 		sql: `CREATE TABLE IF NOT EXISTS follower (
@@ -46,6 +48,20 @@ export default [
                 userId varchar(200) NOT NULL,
                 followerUserId varchar(200) NOT NULL,
                 PRIMARY KEY (id)
+              ) DEFAULT CHARSET=utf8;
+            `
+	},
+	// 评论
+	{
+		title: 'comments',
+		sql: `CREATE TABLE IF NOT EXISTS comments (
+                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                aId    BIGINT NOT NULL,
+                parentId  BIGINT,
+                content   TEXT   NOT NULL,
+                userId    BIGINT NOT NULL,
+                date      BIGINT NOT NULL,
+                state TINYINT
               ) DEFAULT CHARSET=utf8;
             `
 	}

@@ -72,12 +72,13 @@ class Service {
 	async getArticleList(params: { currentPage: number; pageSize: number; state: number }) {
 		const currentNumber = (params.currentPage - 1) * params.pageSize
 		const res = await poolPromise.query<RowDataPacket[]>(
-			'SELECT a.aId,a.title,a.userId,a.updateDate,u.nickName,u.iconUrl FROM article a LEFT OUTER JOIN user u on a.userId = u.userId WHERE state=? LIMIT ?,?',
+			'SELECT a.aId,a.title,a.introduction,a.userId,a.updateDate,u.nickName,u.iconUrl FROM article a LEFT OUTER JOIN user u on a.userId = u.userId WHERE state=? LIMIT ?,?',
 			[params.state, currentNumber, params.pageSize]
 		)
-		return res[0].map(({ aId, title, userId, nickName, iconUrl, updateDate }) => ({
+		return res[0].map(({ aId, title, introduction, userId, nickName, iconUrl, updateDate }) => ({
 			aId,
 			title,
+			introduction,
 			userId,
 			nickName,
 			iconUrl,
@@ -86,15 +87,16 @@ class Service {
 	}
 	// 获取自身的文章列表
 	async getArticleListByUser(params: { userId: string; states: number[] }) {
-		let sql = 'SELECT aId,title,userId,updateDate FROM article'
+		let sql = 'SELECT aId,title,introduction,userId,updateDate FROM article'
 		if (params.states.length > 0) {
 			const where = getWhereOr('state', params.states)
 			sql = `${sql} WHERE ${where} `
 		}
 		const res = await poolPromise.query<RowDataPacket[]>(sql)
-		res[0].map(({ aId, title, userId, updateDate }) => ({
+		return res[0].map(({ aId, title, introduction, userId, updateDate }) => ({
 			aId,
 			title,
+			introduction,
 			userId,
 			updateDate
 		}))

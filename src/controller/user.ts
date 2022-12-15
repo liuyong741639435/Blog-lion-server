@@ -6,6 +6,7 @@ import collectErrorLogs from '../utils/collectErrorLogs'
 import response from '../utils/response'
 import { getFormData } from '../utils/tools'
 import userTips from '../errorTips/userTips'
+import currencyTips from '../errorTips/currency'
 import UserService from '../service/userService'
 
 @Controller('/user')
@@ -23,7 +24,7 @@ export default class UserController {
 			const res = await UserService.getUser({ userName })
 			res.length > 0 ? response.success(ctx) : response.error(ctx)
 		} catch (error) {
-			response.error(ctx, userTips.neibuError.msg, collectErrorLogs(error))
+			response.error(ctx, currencyTips.neibuError, collectErrorLogs(error))
 		}
 	}
 	// 注册
@@ -53,7 +54,7 @@ export default class UserController {
 			})
 			response.success(ctx)
 		} catch (error) {
-			response.error(ctx, userTips.neibuError.msg, collectErrorLogs(error))
+			response.error(ctx, currencyTips.neibuError, collectErrorLogs(error))
 		}
 	}
 	// 登录
@@ -79,7 +80,7 @@ export default class UserController {
 				response.error(ctx, userTips.loginError.msg)
 			}
 		} catch (error) {
-			response.error(ctx, userTips.neibuError.msg, collectErrorLogs(error))
+			response.error(ctx, currencyTips.neibuError, collectErrorLogs(error))
 		}
 	}
 	// 修改密码
@@ -102,7 +103,7 @@ export default class UserController {
 			})
 			response.success(ctx)
 		} catch (error) {
-			response.error(ctx, userTips.neibuError.msg, collectErrorLogs(error))
+			response.error(ctx, currencyTips.neibuError, collectErrorLogs(error))
 		}
 	}
 	// 获取用户信息
@@ -126,7 +127,7 @@ export default class UserController {
 				response.error(ctx)
 			}
 		} catch (error) {
-			response.error(ctx, userTips.neibuError.msg, collectErrorLogs(error))
+			response.error(ctx, currencyTips.neibuError, collectErrorLogs(error))
 		}
 	}
 	// 修改自身用户信息
@@ -145,7 +146,7 @@ export default class UserController {
 			})
 			affectedRows > 0 ? response.success(ctx) : response.error(ctx)
 		} catch (error) {
-			response.error(ctx, userTips.neibuError.msg, collectErrorLogs(error))
+			response.error(ctx, currencyTips.neibuError, collectErrorLogs(error))
 		}
 	}
 }
