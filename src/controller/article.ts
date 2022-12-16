@@ -96,7 +96,7 @@ export default class ArticleController {
 				aId,
 				userId
 			})
-			affectedRows > 0 ? response.success(ctx, `删除的条数:${affectedRows}`) : response.error(ctx, `删除的条数:${affectedRows}`)
+			affectedRows > 0 ? response.success(ctx) : response.error(ctx)
 		} catch (error) {
 			response.error(ctx, currencyTips.neibuError, collectErrorLogs(error))
 		}

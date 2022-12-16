@@ -86,22 +86,14 @@ export default class UserController {
 	// 修改密码
 	@RequestMapping({ url: '/updatePassword', method: REQUEST_METHOD.POST, login: true })
 	async updatePassword(ctx: Context) {
-		const { userName, password } = getFormData(ctx)
-		if (!userTips.userName.regular.test(userName)) {
-			response.error(ctx, userTips.userName.msg)
-			return
-		}
-
-		if (!userTips.password.regular.test(password)) {
-			response.error(ctx, userTips.password.msg)
-			return
-		}
+		const { password } = getFormData(ctx)
 		const { userId } = ctx.user
+		// todo 前端过来的应该是md5后的数据 后续补上,校验一下，格式，起码校验长度
 		try {
-			await UserService.updateProfile(userId, {
+			const { affectedRows } = await UserService.updateProfile(userId, {
 				password
 			})
-			response.success(ctx)
+			affectedRows > 0 ? response.success(ctx) : response.error(ctx)
 		} catch (error) {
 			response.error(ctx, currencyTips.neibuError, collectErrorLogs(error))
 		}
