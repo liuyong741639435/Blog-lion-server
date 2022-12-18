@@ -70,6 +70,7 @@ class Service {
 	}
 	// 获取文章列表, 后续是要搜索,或者分类 todo
 	async getArticleList(params: { currentPage: number; pageSize: number; state: number }) {
+		console.log('params', params)
 		const currentNumber = (params.currentPage - 1) * params.pageSize
 		const res = await poolPromise.query<RowDataPacket[]>(
 			'SELECT a.aId,a.title,a.briefIntroduction,a.userId,a.updateDate,u.nickName,u.iconUrl FROM article a LEFT OUTER JOIN user u on a.userId = u.userId WHERE state=? LIMIT ?,?',

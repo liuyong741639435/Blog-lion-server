@@ -72,9 +72,9 @@ export default class UserController {
 		}
 
 		try {
-			const userId = await UserService.getLogin({ userName, password })
-			if (userId) {
-				const token = sign({ userId: userId })
+			const res = await UserService.getLogin({ userName, password })
+			if (res.length > 0) {
+				const token = sign({ userId: res[0].userId })
 				response.success(ctx, { token })
 			} else {
 				response.error(ctx, userTips.loginError.msg)
