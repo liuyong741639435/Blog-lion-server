@@ -48,7 +48,7 @@ const config = {
 			default: { appenders: ['cheese'], level: 'info' },
 			access: { appenders: ['access'], level: 'info' }, // 访问日志
 			db: { appenders: ['db'], level: 'info' },
-			catch: { appenders: ['catchError'], level: 'info' }
+			catchError: { appenders: ['catchError'], level: 'info' }
 		}
 	},
 	// token 相关

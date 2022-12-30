@@ -64,7 +64,7 @@ class Service {
 	// 查询文章下的评论
 	async getComment(params: { aId: string; state: CommentState }) {
 		const res = await poolPromise.query<RowDataPacket[]>(
-			'SELECT a.id,a.aId,a.userId,a.parentId,b.nickName,b.iconUrl,a.content,a.date from comments AS a,users AS b WHERE a.aId= ? AND state = ? AND a.userId=b.userId',
+			'SELECT a.id,a.aId,a.userId,a.parentId,b.nickName,b.iconUrl,a.content,a.date from comments AS a,user AS b WHERE a.aId= ? AND state = ? AND a.userId=b.userId',
 			[params.aId, params.state]
 		)
 		return res[0].map(({ id, aId, userId, parentId, nickName, iconUrl, content, date }) => ({

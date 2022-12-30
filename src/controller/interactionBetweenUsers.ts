@@ -122,6 +122,7 @@ export default class TestController {
 			})
 			response.success(ctx, commentList)
 		} catch (error) {
+			console.log(error)
 			response.error(ctx, currencyTips.neibuError, collectErrorLogs(error))
 		}
 	}

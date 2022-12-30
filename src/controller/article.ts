@@ -56,7 +56,7 @@ export default class ArticleController {
 					title,
 					content
 				})
-				if (affectedRows > 1) {
+				if (affectedRows > 0) {
 					response.success(ctx)
 				} else {
 					response.error(ctx)
@@ -116,6 +116,7 @@ export default class ArticleController {
 			})
 			response.success(ctx, res)
 		} catch (error) {
+			console.log('error', error)
 			response.error(ctx, currencyTips.neibuError, collectErrorLogs(error))
 		}
 	}

@@ -22,6 +22,7 @@ class Service {
 	/* 改 */
 	// 修改
 	async updateArticle(params: { aId: string; userId: string; title: string; content: string }) {
+		console.log(params)
 		const res = await poolPromise.query<OkPacket>('UPDATE article SET title = ?, content = ? WHERE aId = ? AND userId = ?', [
 			params.title,
 			params.content,
