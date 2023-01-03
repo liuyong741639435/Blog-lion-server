@@ -1,0 +1,1 @@
+import{r as e}from"./request.8ec64058.js";const r=t=>e.get("/article/getArticleByUser",{params:t}),s=t=>e.get("/article/getArticle",{params:t}),c=t=>e.post("/article/editArticle",JSON.stringify(t)),a=t=>e.post("/article/setArticleState",JSON.stringify(t)),A=t=>e.get("/article/getArticleList",{params:t});export{A,r as a,c as b,a as c,s as d};
